@@ -309,6 +309,129 @@
             </div>
         </div>
     </footer>
+<script>
+    // Menu Responsivo
+    const toggleButton = document.getElementById('toggleButton');
+    const navUl = document.querySelector('nav ul');
 
+    toggleButton.addEventListener('click', () => {
+        navUl.classList.toggle('hidden');
+    });
+
+    // Desaparecimento do cabeçalho ao rolar para baixo
+    let lastScrollTop = 0;
+    const header = document.getElementById('header');
+
+    window.addEventListener('scroll', function () {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+            // Se o usuário estiver rolando para baixo, esconde o cabeçalho
+            header.classList.add('hidden');
+        } else {
+            // Se o usuário estiver rolando para cima, mostra o cabeçalho
+            header.classList.remove('hidden');
+        }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Para evitar que o valor de scrollTop seja negativo
+    }, false);
+
+    // Rolagem suave para as seções
+    function scrollToSection(sectionId) {
+        document.querySelector(sectionId).scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+
+    // Botão "Ver Oportunidades" - Rolagem suave até a seção de Oportunidades
+    const opportunitiesButton = document.querySelector('#hero button');
+    opportunitiesButton.addEventListener('click', () => {
+        scrollToSection('#oportunidades');
+    });
+
+    // Efeito de Paralaxe na seção "Sobre"
+    const sobreSection = document.querySelector('#sobre');
+    const sobreImage = document.querySelector('#sobre img');
+
+    window.addEventListener('scroll', () => {
+        let scrollPosition = window.scrollY;
+        sobreImage.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+    });
+
+    // Lazy Loading das imagens
+    const images = document.querySelectorAll('img');
+
+    const loadImage = (image) => {
+        const src = image.getAttribute('data-src');
+        if (src) {
+            image.src = src;
+            image.removeAttribute('data-src');
+        }
+    };
+
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                loadImage(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+
+    images.forEach(image => {
+        imageObserver.observe(image);
+    });
+
+    // Animações ao rolar (Scroll Animations)
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+    const scrollAnimation = () => {
+        animatedElements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            if (elementPosition < screenPosition) {
+                element.classList.add('visible');
+            } else {
+                element.classList.remove('visible');
+            }
+        });
+    };
+
+    window.addEventListener('scroll', scrollAnimation);
+    window.addEventListener('load', scrollAnimation);
+
+    // Validação do Formulário de Contato
+    const form = document.querySelector('#contato form');
+
+    form.addEventListener('submit', (event) => {
+        const name = form.querySelector('input[name="name"]');
+        const email = form.querySelector('input[name="email"]');
+        const message = form.querySelector('textarea[name="message"]');
+
+        if (name.value === '' || email.value === '' || message.value === '') {
+            alert('Por favor, preencha todos os campos!');
+            event.preventDefault(); // Impede o envio do formulário
+        } else {
+            alert('Mensagem enviada com sucesso!');
+        }
+    });
+
+    // Botão "Voltar ao Topo"
+    const backToTopButton = document.createElement('button');
+    backToTopButton.id = 'backToTop';
+    backToTopButton.innerText = '↑';
+    document.body.appendChild(backToTopButton);
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+            backToTopButton.style.display = 'block';
+        } else {
+            backToTopButton.style.display = 'none';
+        }
+    });
+
+    backToTopButton.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+        </script>
+    
 </body>
 </html>
