@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import './Login.css'; // Esta linha importa o CSS
 
 const LoginPage = () => {
+  // Resto do código permanece o mesmo...
+}
+
   const [selectedRole, setSelectedRole] = useState(null);
 
   const handleEmployeeLogin = () => {
