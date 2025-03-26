@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import '../css/Login.css'; 
 
 const LoginPage = () => {
@@ -8,13 +8,11 @@ const LoginPage = () => {
 
   const handleEmployeeLogin = () => {
     setSelectedRole('employee');
-    // Redireciona para página de login de funcionário
     navigate('/employee-login');
   };
 
   const handleVisitorAccess = () => {
     setSelectedRole('visitor');
-    // Redireciona para página principal de visitantes
     navigate('/visitor-home');
   };
 
@@ -64,4 +62,26 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+// Componentes de exemplo para rotas
+const EmployeeLogin = () => (
+  <div>Página de Login de Funcionário</div>
+);
+
+const VisitorHome = () => (
+  <div>Página Inicial de Visitante</div>
+);
+
+// Configuração de Rotas
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/employee-login" element={<EmployeeLogin />} />
+        <Route path="/visitor-home" element={<VisitorHome />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
