@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login com Supabase</title>
-    <script src="https://lmlxvmzeifjvjakpomgp.supabase.co"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,6 +12,7 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f2f5;
+            margin: 0;
         }
         .login-container {
             background-color: white;
@@ -55,39 +56,54 @@
 
     <script>
         // Configuração do Supabase
-        const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co'
-        const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM'
+        const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
 
-        const supabase = window.supabase.createClient(https://lmlxvmzeifjvjakpomgp.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM)
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Verificar se já está logado ao carregar a página
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                // Se já estiver logado, redireciona direto
+                window.location.href = 'dashboard.html';
+            }
+        });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault()
+            e.preventDefault();
             
-            const email = document.getElementById('email').value
-            const senha = document.getElementById('senha').value
-            const erroDiv = document.getElementById('erro')
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const erroDiv = document.getElementById('erro');
 
             try {
+                // Limpa mensagens de erro anteriores
+                erroDiv.textContent = '';
+
                 // Tenta fazer login
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: senha
-                })
+                });
 
                 if (error) {
                     // Se houver erro, mostra mensagem
-                    erroDiv.textContent = error.message
-                    return
+                    erroDiv.textContent = error.message;
+                    return;
                 }
 
                 // Login bem-sucedido, redireciona para dashboard
                 if (data.user) {
-                    window.location.href = 'funcionario.html'
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 100);
                 }
             } catch (err) {
-                erroDiv.textContent = 'Erro ao tentar login'
+                erroDiv.textContent = 'Erro ao tentar login: ' + err.message;
             }
-        })
+        });
     </script>
 </body>
 </html>
