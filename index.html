@@ -4,8 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Segurança</title>
-   <link rel="stylesheet" href="css/login.css">
-   <link
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-title {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .login-button:hover {
+            background-color: #45a049;
+        }
+
+        .employee-btn {
+            background-color: #2196F3;
+        }
+
+        .employee-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .visitor-btn {
+            background-color: #FF9800;
+        }
+
+        .visitor-btn:hover {
+            background-color: #F57C00;
+        }
+
+        .button-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .divider-line {
+            flex-grow: 1;
+            height: 1px;
+            background-color: #ccc;
+        }
+
+        .divider-text {
+            margin: 0 15px;
+            color: #666;
+        }
+
+        .copyright {
+            margin-top: 30px; 
+            color: #666; 
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -18,21 +105,18 @@
             </svg>
             Funcionário
         </button>
-
         <div class="divider">
             <div class="divider-line"></div>
             <span class="divider-text">OU</span>
             <div class="divider-line"></div>
         </div>
-
         <button onclick="handleVisitorAccess()" class="login-button visitor-btn">
             <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 4.243l3.536 3.536M9.172 9.172L5.636 5.636m3.536 4.243L5.636 12.12m4.242 4.242l3.536-3.536m-3.536-4.242l3.536-3.536" />
             </svg>
             Visitante
         </button>
-
-        <div style="margin-top: 30px; color: #666; font-size: 0.8em;">
+        <div class="copyright">
             © 2024 Sua Empresa. Todos os direitos reservados.
         </div>
     </div>
@@ -40,22 +124,13 @@
     <script>
         function handleEmployeeLogin() {
             // Redireciona para página de login de funcionário
-            window.location.href = 'funcionario.html';
+            window.location.href = 'login.html';
         }
 
         function handleVisitorAccess() {
             // Redireciona para página de visitante
-            window.location.href = 'visitante.html';
+            window.location.href = 'container.html';
         }
-        function handleEmployeeLogin() {
-    // Redireciona para página de login de funcionário
-    window.location.href = 'login.html';
-}
-
-function handleVisitorAccess() {
-    // Redireciona para página de visitante
-    window.location.href = 'container.html';
-}
     </script>
 </body>
 </html>
