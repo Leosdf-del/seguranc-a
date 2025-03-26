@@ -1,27 +1,9 @@
-<?php
-session_start();
-
-// Verificar se o usuário está logado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$nome_usuario = $_SESSION['usuario_nome'];
-
-// Função de logout
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: login.php");
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Login com Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,28 +13,81 @@ if (isset($_GET['logout'])) {
             height: 100vh;
             background-color: #f0f2f5;
         }
-        .dashboard {
+        .login-container {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            width: 300px;
         }
-        .logout-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #f44336;
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
-            text-decoration: none;
-            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        #erro {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <h1>Bem-vindo, <?php echo htmlspecialchars($nome_usuario); ?>!</h1>
-        <p>Você está logado no sistema.</p>
-        <a href="?logout=true" class="logout-btn">Sair</a>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div id="erro"></div>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
     </div>
+
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'SUA_URL_DO_SUPABASE'
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANONIMA_DO_SUPABASE'
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            const email = document.getElementById('email').value
+            const senha = document.getElementById('senha').value
+            const erroDiv = document.getElementById('erro')
+
+            try {
+                // Tenta fazer login
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                })
+
+                if (error) {
+                    // Se houver erro, mostra mensagem
+                    erroDiv.textContent = error.message
+                    return
+                }
+
+                // Login bem-sucedido, redireciona para dashboard
+                if (data.user) {
+                    window.location.href = 'dashboard.html'
+                }
+            } catch (err) {
+                erroDiv.textContent = 'Erro ao tentar login'
+            }
+        })
+    </script>
 </body>
 </html>
