@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import './Login.css'; // Esta linha importa o CSS
+import { useNavigate } from 'react-router-dom';
+import './Login.css'; 
 
 const LoginPage = () => {
-  // Resto do código permanece o mesmo...
-}
-
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState(null);
 
   const handleEmployeeLogin = () => {
     setSelectedRole('employee');
-    // Redirect to employee login form or process
-    console.log('Employee login selected');
+    // Redireciona para página de login de funcionário
+    navigate('/employee-login');
   };
 
   const handleVisitorAccess = () => {
     setSelectedRole('visitor');
-    // Redirect to main site
-    console.log('Visitor access selected');
+    // Redireciona para página principal de visitantes
+    navigate('/visitor-home');
   };
 
   return (
@@ -26,7 +25,6 @@ const LoginPage = () => {
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Bem-vindo</h1>
           <p className="text-gray-600 mb-6">Escolha sua forma de acesso</p>
         </div>
-
         <div className="space-y-4">
           <button 
             onClick={handleEmployeeLogin}
@@ -40,13 +38,11 @@ const LoginPage = () => {
             </svg>
             Funcionário
           </button>
-
           <div className="flex items-center justify-center my-4">
             <div className="border-t border-gray-300 flex-grow mr-3"></div>
             <span className="text-gray-500 text-sm">OU</span>
             <div className="border-t border-gray-300 flex-grow ml-3"></div>
           </div>
-
           <button 
             onClick={handleVisitorAccess}
             className="w-full flex items-center justify-center py-3 px-4 
@@ -60,7 +56,6 @@ const LoginPage = () => {
             Visitante
           </button>
         </div>
-
         <div className="text-center text-sm text-gray-500 mt-6">
           © 2024 Sua Empresa. Todos os direitos reservados.
         </div>
