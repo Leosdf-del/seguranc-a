@@ -1,40 +1,117 @@
-      /* Existing styles from the previous document */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+   /* Importação de fonte personalizada */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
-        :root {
-            --color-primary: #3B82F6;
-            --color-secondary: #10B981;
-            --color-accent: #6366F1;
-            --gradient-primary: linear-gradient(135deg, #3B82F6, #6366F1);
-            --gradient-secondary: linear-gradient(135deg, #10B981, #34D399);
-        }
+/* Variáveis de tema */
+:root {
+    --color-primary: #3B82F6;
+    --color-secondary: #10B981;
+    --color-accent: #6366F1;
+    --gradient-primary: linear-gradient(135deg, #3B82F6, #6366F1);
+    --gradient-secondary: linear-gradient(135deg, #10B981, #34D399);
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
-        }
+/* Estilo base do corpo */
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+}
 
-        /* Previous styles remain the same */
+/* Cartões elevados com efeito de hover */
+.card-elevated {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.08);
+}
 
-        /* Login modal styles */
-        .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+.card-elevated:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.12);
+}
 
-        .login-modal {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
+/* Animação de pulso sutil */
+@keyframes pulse-subtle {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.02); 
+    }
+}
+
+.animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite;
+}
+
+/* Estilo de cabeçalho */
+header {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Botões com gradiente */
+.btn-gradient-primary {
+    background: linear-gradient(to right, #3B82F6, #6366F1);
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.btn-gradient-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-gradient-secondary {
+    background: linear-gradient(to right, #10B981, #34D399);
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.btn-gradient-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Estilo de tabela */
+table thead {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+table tbody tr:hover {
+    background-color: #EFF6FF;
+    transition: background-color 0.3s ease;
+}
+
+/* Status e tags */
+.status-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+.status-confirmed {
+    background-color: #10B981;
+    color: white;
+}
+
+/* Chat e mensagens */
+.chat-message-sent {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+    border-radius: 0.5rem;
+    max-width: 75%;
+    margin-left: auto;
+}
+
+.chat-message-received {
+    background-color: #F3F4F6;
+    color: #4B5563;
+    border-radius: 0.5rem;
+    max-width: 75%;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
