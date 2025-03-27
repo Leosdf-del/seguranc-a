@@ -6,80 +6,80 @@
     <title>Nexus - Portal Corporativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Existing styles remain the same */
-    </style>
 </head>
 <body class="bg-gray-100">
-    <!-- Rest of the existing HTML remains the same, only the header script needs modification -->
+    <!-- Conteúdo do corpo -->
+
     <script>
-        // Existing chat script
-        document.getElementById('enviar-mensagem').addEventListener('click', enviarMensagem);
-        document.getElementById('mensagem-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                enviarMensagem();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adiciona listeners e funções após o carregamento completo do DOM
+            const enviarMensagemBtn = document.getElementById('enviar-mensagem');
+            const mensagemInput = document.getElementById('mensagem-input');
+
+            if (enviarMensagemBtn) {
+                enviarMensagemBtn.addEventListener('click', enviarMensagem);
             }
-        });
 
-        // Add logout functionality to the header
-        function addLogoutButton() {
-            // Create logout button
-            const logoutButton = document.createElement('button');
-            logoutButton.innerHTML = `
-                <i class="fas fa-sign-out-alt mr-2"></i>Sair
-            `;
-            logoutButton.className = 'ml-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition';
-            
-            // Add click event to logout button
-            logoutButton.addEventListener('click', function() {
-                // Add your logout logic here
-                // For example:
-                // - Clear user session
-                // - Redirect to login page
-                // - Reset user information
-                alert('Logout clicked! Implement your logout logic here.');
-            });
-
-            // Find the user profile container and append the logout button
-            const userProfileContainer = document.querySelector('header .flex.items-center.space-x-4');
-            if (userProfileContainer) {
-                userProfileContainer.appendChild(logoutButton);
+            if (mensagemInput) {
+                mensagemInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        enviarMensagem();
+                    }
+                });
             }
-        }
 
-        // Call the function to add logout button when page loads
-        addLogoutButton();
+            function addLogoutButton() {
+                const logoutButton = document.createElement('button');
+                logoutButton.innerHTML = `
+                    <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                `;
+                logoutButton.className = 'ml-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition';
+                
+                logoutButton.addEventListener('click', function() {
+                    alert('Logout clicked! Implement your logout logic here.');
+                });
 
-        function enviarMensagem() {
-            const input = document.getElementById('mensagem-input');
-            const chatContainer = document.getElementById('chat-container');
-            
-            if (input.value.trim() === '') return;
+                const userProfileContainer = document.querySelector('header .flex.items-center.space-x-4');
+                if (userProfileContainer) {
+                    userProfileContainer.appendChild(logoutButton);
+                }
+            }
 
-            const mensagemUsuario = document.createElement('div');
-            mensagemUsuario.innerHTML = `
-                <div class="bg-blue-100 p-3 rounded-lg mb-2 max-w-xs ml-auto">
-                    <p class="text-sm font-medium text-blue-800">${input.value}</p>
-                    <span class="text-xs text-blue-600 block text-right mt-1">Agora</span>
-                </div>
-            `;
-            chatContainer.appendChild(mensagemUsuario);
+            addLogoutButton();
 
-            setTimeout(() => {
-                const respostaAutomatica = document.createElement('div');
-                respostaAutomatica.innerHTML = `
-                    <div class="bg-gray-200 p-3 rounded-lg mb-2 max-w-xs">
-                        <p class="text-sm font-medium text-gray-800">Recebemos sua mensagem. Em breve retornaremos.</p>
-                        <span class="text-xs text-gray-600 block text-right mt-1">Suporte</span>
+            function enviarMensagem() {
+                const input = document.getElementById('mensagem-input');
+                const chatContainer = document.getElementById('chat-container');
+                
+                if (!input || !chatContainer) return;
+                
+                if (input.value.trim() === '') return;
+                
+                const mensagemUsuario = document.createElement('div');
+                mensagemUsuario.innerHTML = `
+                    <div class="bg-blue-100 p-3 rounded-lg mb-2 max-w-xs ml-auto">
+                        <p class="text-sm font-medium text-blue-800">${input.value}</p>
+                        <span class="text-xs text-blue-600 block text-right mt-1">Agora</span>
                     </div>
                 `;
-                chatContainer.appendChild(respostaAutomatica);
+                chatContainer.appendChild(mensagemUsuario);
+                
+                setTimeout(() => {
+                    const respostaAutomatica = document.createElement('div');
+                    respostaAutomatica.innerHTML = `
+                        <div class="bg-gray-200 p-3 rounded-lg mb-2 max-w-xs">
+                            <p class="text-sm font-medium text-gray-800">Recebemos sua mensagem. Em breve retornaremos.</p>
+                            <span class="text-xs text-gray-600 block text-right mt-1">Suporte</span>
+                        </div>
+                    `;
+                    chatContainer.appendChild(respostaAutomatica);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 1000);
+                
+                input.value = '';
                 chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 1000);
-
-            input.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+            }
+        });
     </script>
 </body>
 </html>
