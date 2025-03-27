@@ -122,15 +122,23 @@
     </div>
 
     <script>
-        function handleEmployeeLogin() {
-            // Redireciona para página de login de funcionário
-            window.location.href = 'login.html';
-        }
+       function handleEmployeeLogin() {
+    try {
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Erro no redirecionamento:', error);
+        alert('Não foi possível acessar a página de login.');
+    }
+}
 
-        function handleVisitorAccess() {
-            // Redireciona para página de visitante
-            window.location.href = 'container.html';
-        }
+function handleVisitorAccess() {
+    try {
+        window.location.href = 'container.html';
+    } catch (error) {
+        console.error('Erro no redirecionamento:', error);
+        alert('Não foi possível acessar a página de visitante.');
+    }
+}
     </script>
 </body>
 </html>
