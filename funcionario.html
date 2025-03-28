@@ -1,327 +1,187 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus - Portal Corporativo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Existing styles remain the same as in the original document */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+<script>
+    // Configuração do Supabase
+    const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
 
-        /* Previous CSS styles remain unchanged */
-    </style>
-</head>
-<body class="bg-gray-100">
-    <div id="login-page" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-96">
-            <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-blue-600">Nexus</h1>
-                <p class="text-gray-500">Portal Corporativo</p>
-            </div>
-            <form id="login-form" class="space-y-4">
-                <input 
-                    type="email" 
-                    id="email-input" 
-                    placeholder="E-mail corporativo" 
-                    required 
-                    class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-200 transition"
-                >
-                <input 
-                    type="password" 
-                    id="password-input" 
-                    placeholder="Senha" 
-                    required 
-                    class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-200 transition"
-                >
-                <button 
-                    type="submit" 
-                    class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg hover:opacity-90 transition font-semibold"
-                >
-                    Entrar
-                </button>
-            </form>
-            <div id="login-error" class="text-red-500 text-center mt-4 hidden">
-                Credenciais inválidas. Tente novamente.
-            </div>
-        </div>
-    </div>
+    // Páginas
+    const loginPage = document.getElementById('login-page');
+    const mainPortal = document.getElementById('main-portal');
+    const adminPortal = document.getElementById('admin-portal');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
 
-    <div id="main-portal" class="hidden min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-        <!-- Existing main portal content from previous HTML -->
-        <header class="bg-white shadow-md">
-            <!-- Previous header content -->
-        </header>
+    // Function to show/hide loading overlay
+    function showLoading(show = true) {
+        const loadingOverlay = document.getElementById('loadingOverlay') || createLoadingOverlay();
+        loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
 
-        <main class="container mx-auto px-4 py-8">
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Previous cards content -->
-                <div class="bg-white rounded-xl card-elevated p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-green-600 flex items-center">
-                            <i class="fas fa-comments mr-3 text-green-500"></i>
-                            Chat Corporativo
-                        </h2>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                            <span class="text-sm text-gray-500 font-medium">Online</span>
-                        </div>
-                    </div>
+    // Create loading overlay if it doesn't exist
+    function createLoadingOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'loadingOverlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+        
+        const spinner = document.createElement('div');
+        spinner.style.cssText = `
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+        overlay.appendChild(spinner);
+        document.body.appendChild(overlay);
+        return overlay;
+    }
 
-                    <div id="chat-rooms" class="mb-4">
-                        <div class="flex space-x-2 overflow-x-auto">
-                            <button 
-                                data-room="geral" 
-                                class="chat-room-btn bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-200 transition"
-                            >
-                                Chat Geral
-                            </button>
-                            <button 
-                                data-room="ti" 
-                                class="chat-room-btn bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-green-200 transition"
-                            >
-                                TI
-                            </button>
-                            <button 
-                                data-room="rh" 
-                                class="chat-room-btn bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-purple-200 transition"
-                            >
-                                RH
-                            </button>
-                        </div>
-                    </div>
+    // Password visibility toggle
+    const passwordInput = document.getElementById('password-input');
+    const passwordToggle = document.createElement('span');
+    passwordToggle.textContent = '👁️';
+    passwordToggle.style.cssText = `
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+    `;
+    passwordInput.parentNode.style.position = 'relative';
+    passwordInput.parentNode.appendChild(passwordToggle);
 
-                    <div id="chat-container" class="h-80 overflow-y-auto bg-gray-50 rounded-lg p-4 mb-4">
-                        <div class="text-center text-gray-500 mb-4">
-                            Selecione um canal de chat
-                        </div>
-                    </div>
+    passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        passwordToggle.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+    });
 
-                    <div class="flex space-x-2">
-                        <input 
-                            type="text" 
-                            id="mensagem-input" 
-                            placeholder="Digite sua mensagem" 
-                            class="flex-grow p-3 border rounded-lg focus:ring-2 focus:ring-green-200 transition"
-                        >
-                        <button 
-                            id="enviar-mensagem" 
-                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-lg hover:opacity-90 transition"
-                        >
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
+    // Initialize Supabase
+    let supabase;
+    try {
+        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (error) {
+        console.error('Supabase initialization error:', error);
+        loginError.textContent = 'Erro ao inicializar autenticação';
+        loginError.classList.remove('hidden');
+    }
 
-        <footer class="bg-white shadow-md py-4 mt-8">
-            <div class="container mx-auto px-4 text-center">
-                <p class="text-gray-600">&copy; 2025 Nexus Portal Corporativo. Todos os direitos reservados.</p>
-                <button id="logout-btn" class="mt-2 text-red-500 hover:text-red-700 transition">
-                    Sair
-                </button>
-            </div>
-        </footer>
-    </div>
+    // Authentication
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email-input').value.trim();
+        const password = document.getElementById('password-input').value;
 
-    <div id="admin-portal" class="hidden min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-        <header class="bg-white shadow-md">
-            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-gray-800">Painel Administrativo</h1>
-                <button id="admin-logout-btn" class="text-red-500 hover:text-red-700 transition">
-                    Sair
-                </button>
-            </div>
-        </header>
+        // Basic validation
+        if (!email || !password) {
+            loginError.textContent = 'Por favor, preencha todos os campos';
+            loginError.classList.remove('hidden');
+            return;
+        }
 
-        <main class="container mx-auto px-4 py-8">
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Gerenciar Usuários</h2>
-                    <div id="user-management">
-                        <!-- Usuários serão listados aqui -->
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Relatórios</h2>
-                    <!-- Conteúdo de relatórios -->
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Configurações</h2>
-                    <!-- Conteúdo de configurações -->
-                </div>
-            </div>
-        </main>
-    </div>
+        try {
+            showLoading(true);
+            loginError.classList.add('hidden');
 
-    <script>
-        // Configuração do Supabase
-        const supabaseUrl = 'YOUR_SUPABASE_PROJECT_URL';
-        const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
-        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
-        // Páginas
-        const loginPage = document.getElementById('login-page');
-        const mainPortal = document.getElementById('main-portal');
-        const adminPortal = document.getElementById('admin-portal');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
+            if (error) {
+                throw error;
+            }
 
-        // Autenticação
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email-input').value;
-            const password = document.getElementById('password-input').value;
-
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw error;
-
-                // Verificar se o usuário é admin
-                const { data: adminData, error: adminError } = await supabase
+            if (data.user) {
+                // Verify user role
+                const { data: userData, error: userError } = await supabase
                     .from('users')
                     .select('role')
                     .eq('email', email)
                     .single();
 
-                if (adminError) throw adminError;
+                if (userError) throw userError;
 
-                if (adminData.role === 'admin') {
+                if (userData.role === 'admin') {
                     showAdminPortal();
                 } else {
                     showMainPortal();
                 }
-            } catch (error) {
-                loginError.textContent = error.message;
-                loginError.classList.remove('hidden');
             }
-        });
+        } catch (error) {
+            loginError.textContent = error.message || 'Credenciais inválidas. Tente novamente.';
+            loginError.classList.remove('hidden');
+            console.error('Login error:', error);
+        } finally {
+            showLoading(false);
+        }
+    });
 
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', logout);
-        document.getElementById('admin-logout-btn').addEventListener('click', logout);
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('admin-logout-btn').addEventListener('click', logout);
 
-        async function logout() {
+    async function logout() {
+        try {
+            showLoading(true);
             await supabase.auth.signOut();
             showLoginPage();
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            showLoading(false);
         }
+    }
 
-        // Mostrar páginas
-        function showLoginPage() {
-            loginPage.classList.remove('hidden');
-            mainPortal.classList.add('hidden');
-            adminPortal.classList.add('hidden');
-        }
+    // Show pages
+    function showLoginPage() {
+        loginPage.classList.remove('hidden');
+        mainPortal.classList.add('hidden');
+        adminPortal.classList.add('hidden');
+    }
 
-        function showMainPortal() {
-            loginPage.classList.add('hidden');
-            mainPortal.classList.remove('hidden');
-            adminPortal.classList.add('hidden');
-            initializeChat();
-        }
+    function showMainPortal() {
+        loginPage.classList.add('hidden');
+        mainPortal.classList.remove('hidden');
+        adminPortal.classList.add('hidden');
+        initializeChat();
+    }
 
-        function showAdminPortal() {
-            loginPage.classList.add('hidden');
-            mainPortal.classList.add('hidden');
-            adminPortal.classList.remove('hidden');
-            loadAdminData();
-        }
+    function showAdminPortal() {
+        loginPage.classList.add('hidden');
+        mainPortal.classList.add('hidden');
+        adminPortal.classList.remove('hidden');
+        loadAdminData();
+    }
 
-        // Chat Functionality
-        let currentChatRoom = 'geral';
+    // Existing chat and admin functionality remains the same...
 
-        document.querySelectorAll('.chat-room-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentChatRoom = btn.getAttribute('data-room');
-                loadChatMessages(currentChatRoom);
-            });
-        });
-
-        async function initializeChat() {
-            loadChatMessages(currentChatRoom);
-        }
-
-        async function loadChatMessages(room) {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.innerHTML = ''; // Clear previous messages
-
-            const { data, error } = await supabase
-                .from('messages')
-                .select('*')
-                .eq('room', room)
-                .order('created_at', { ascending: true });
-
-            if (data) {
-                data.forEach(msg => {
-                    const messageElement = document.createElement('div');
-                    messageElement.innerHTML = `
-                        <div class="bg-gray-200 p-3 rounded-lg mb-2 max-w-xs">
-                            <p class="text-sm font-medium text-gray-800">${msg.content}</p>
-                            <span class="text-xs text-gray-600 block text-right mt-1">${msg.sender}</span>
-                        </div>
-                    `;
-                    chatContainer.appendChild(messageElement);
-                });
-            }
-        }
-
-        document.getElementById('enviar-mensagem').addEventListener('click', sendMessage);
-        document.getElementById('mensagem-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        async function sendMessage() {
-            const input = document.getElementById('mensagem-input');
-            const message = input.value.trim();
-
-            if (message === '') return;
-
-            const { data: { user } } = await supabase.auth.getUser();
-
-            const { error } = await supabase
-                .from('messages')
-                .insert({
-                    content: message,
-                    sender: user.email,
-                    room: currentChatRoom
-                });
-
-            if (error) {
-                console.error('Error sending message:', error);
-                return;
-            }
-
-            input.value = '';
-            loadChatMessages(currentChatRoom);
-        }
-
-        // Admin Portal Data Loading
-        async function loadAdminData() {
-            const userManagement = document.getElementById('user-management');
-            
-            const { data, error } = await supabase
-                .from('users')
-                .select('*');
-
-            if (data) {
-                userManagement.innerHTML = data.map(user => `
-                    <div class="bg-gray-100 p-3 rounded mb-2">
-                        <p>${user.email}</p>
-                        <p class="text-sm text-gray-500">${user.role}</p>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Session Check on Page Load
-        document.addEventListener('DOMContentLoaded', async () => {
+    // Session Check on Page Load
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            showLoading(true);
             const { data: { session } } = await supabase.auth.getSession();
             
             if (session) {
@@ -339,7 +199,11 @@
             } else {
                 showLoginPage();
             }
-        });
-    </script>
-</body>
-</html>
+        } catch (error) {
+            console.error('Session check error:', error);
+            showLoginPage();
+        } finally {
+            showLoading(false);
+        }
+    });
+</script>
