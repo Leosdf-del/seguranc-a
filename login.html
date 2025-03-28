@@ -169,7 +169,7 @@
         </form>
 
         <div id="loggedInActions" style="display: none;">
-            <button id="switchAccountBtn" class="btn btn-secondary">Trocar de Conta</button>
+            <button id="switchAccountBtn" class="btn btn-secondary">Continuar</button>
             <button id="logoutBtn" class="btn btn-danger">Sair</button>
         </div>
     </div>
@@ -327,8 +327,9 @@
                 }
             });
 
-            // Botão de trocar de conta
+                  // Botão de trocar de conta (agora "Continuar")
             switchAccountBtn.addEventListener('click', () => {
+                // Mantém a mesma funcionalidade de mostrar o formulário de login novamente
                 updateLoggedOutUI();
             });
 
