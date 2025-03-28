@@ -1,134 +1,109 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-    // Configuração do Supabase
-    const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login com Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #erro {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div id="erro"></div>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
 
-    // Elemento para carregar a biblioteca
-    function loadScript(src) {
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = src;
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Verificar se já está logado ao carregar a página
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                // Se já estiver logado, redireciona direto
+                window.location.href = 'funcionario.html';
+            }
         });
-    }
 
-    // Função principal de inicialização
-    async function initializeAuthentication() {
-        try {
-            // Garantir que o Supabase esteja carregado
-            if (typeof supabase === 'undefined') {
-                await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
-            }
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const erroDiv = document.getElementById('erro');
 
-            // Inicializar Supabase
-            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            try {
+                // Limpa mensagens de erro anteriores
+                erroDiv.textContent = '';
 
-            // Elementos do DOM
-            const loginForm = document.getElementById('loginForm');
-            const messageArea = document.getElementById('messageArea');
-            const senhaInput = document.getElementById('senha');
-            const passwordToggle = document.getElementById('passwordToggle');
+                // Tenta fazer login
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
 
-            // Configurar toggle de visibilidade da senha
-            passwordToggle.addEventListener('click', () => {
-                const type = senhaInput.type === 'password' ? 'text' : 'password';
-                senhaInput.type = type;
-                passwordToggle.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
-            });
-
-            // Função para mostrar mensagens de erro
-            function showErrorMessage(message) {
-                messageArea.textContent = message;
-                messageArea.className = 'message message-error';
-            }
-
-            // Função para mostrar mensagens de sucesso
-            function showSuccessMessage(message) {
-                messageArea.textContent = message;
-                messageArea.className = 'message message-success';
-            }
-
-            // Verificar sessão inicial
-            const { data: { session } } = await supabaseClient.auth.getSession();
-
-            if (session) {
-                // Se já estiver logado, verificar o papel do usuário
-                const { data: userData } = await supabaseClient
-                    .from('users')
-                    .select('role')
-                    .eq('email', session.user.email)
-                    .single();
-
-                // Redirecionar baseado no papel
-                if (userData?.role === 'admin') {
-                    window.location.href = 'admin.html';
-                } else if (userData?.role === 'user') {
-                    window.location.href = 'funcionario.html';
-                }
-                return;
-            }
-
-            // Configurar evento de login
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value.trim();
-                const senha = senhaInput.value;
-
-                // Validação básica
-                if (!email || !senha) {
-                    showErrorMessage('Por favor, preencha todos os campos');
+                if (error) {
+                    // Se houver erro, mostra mensagem
+                    erroDiv.textContent = error.message;
                     return;
                 }
 
-                try {
-                    // Tentar login
-                    const { data, error } = await supabaseClient.auth.signInWithPassword({
-                        email: email,
-                        password: senha
-                    });
-
-                    if (error) {
-                        showErrorMessage(error.message || 'Erro no login');
-                        return;
-                    }
-
-                    if (data.user) {
-                        // Verificar papel do usuário
-                        const { data: userData } = await supabaseClient
-                            .from('users')
-                            .select('role')
-                            .eq('email', email)
-                            .single();
-
-                        // Redirecionar baseado no papel
-                        if (userData?.role === 'admin') {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'funcionario.html';
-                        }
-                    }
-                } catch (err) {
-                    showErrorMessage('Erro ao tentar login');
-                    console.error('Erro de login:', err);
+                // Login bem-sucedido, redireciona para funcionario
+                if (data.user) {
+                    setTimeout(() => {
+                        window.location.href = 'funcionario.html';
+                    }, 100);
                 }
-            });
-
-        } catch (error) {
-            console.error('Erro de inicialização:', error);
-            const messageArea = document.getElementById('messageArea');
-            messageArea.textContent = 'Erro ao carregar a página de login. Recarregue ou tente novamente.';
-            messageArea.className = 'message message-error';
-        }
-    }
-
-    // Chamar inicialização quando o DOM estiver completamente carregado
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeAuthentication);
-    } else {
-        initializeAuthentication();
-    }
-</script>
+            } catch (err) {
+                erroDiv.textContent = 'Erro ao tentar login: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
