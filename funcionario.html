@@ -1,209 +1,197 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-    // Configuração do Supabase
-    const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Função para mostrar/ocultar overlay de carregamento
+        function showLoading(show = true) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.display = show ? 'flex' : 'none';
+        }
 
-    // Páginas
-    const loginPage = document.getElementById('login-page');
-    const mainPortal = document.getElementById('main-portal');
-    const adminPortal = document.getElementById('admin-portal');
-    const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('login-error');
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
 
-    // Function to show/hide loading overlay
-    function showLoading(show = true) {
-        const loadingOverlay = document.getElementById('loadingOverlay') || createLoadingOverlay();
-        loadingOverlay.style.display = show ? 'flex' : 'none';
-    }
+        // Elementos do DOM
+        const loginForm = document.getElementById('loginForm');
+        const messageArea = document.getElementById('messageArea');
+        const loggedUserArea = document.getElementById('loggedUserArea');
+        const loggedInActions = document.getElementById('loggedInActions');
+        const switchAccountBtn = document.getElementById('switchAccountBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-    // Create loading overlay if it doesn't exist
-    function createLoadingOverlay() {
-        const overlay = document.createElement('div');
-        overlay.id = 'loadingOverlay';
-        overlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        `;
+        // Configurar toggle de visibilidade da senha
+        const senhaInput = document.getElementById('senha');
+        const passwordToggle = document.getElementById('passwordToggle');
         
-        const spinner = document.createElement('div');
-        spinner.style.cssText = `
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        `;
-        
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `;
-        
-        document.head.appendChild(style);
-        overlay.appendChild(spinner);
-        document.body.appendChild(overlay);
-        return overlay;
-    }
+        passwordToggle.addEventListener('click', () => {
+            const type = senhaInput.type === 'password' ? 'text' : 'password';
+            senhaInput.type = type;
+            passwordToggle.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        });
 
-    // Password visibility toggle
-    const passwordInput = document.getElementById('password-input');
-    const passwordToggle = document.createElement('span');
-    passwordToggle.textContent = '👁️';
-    passwordToggle.style.cssText = `
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        user-select: none;
-    `;
-    passwordInput.parentNode.style.position = 'relative';
-    passwordInput.parentNode.appendChild(passwordToggle);
-
-    passwordToggle.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        passwordToggle.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
-    });
-
-    // Initialize Supabase
-    let supabase;
-    try {
-        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (error) {
-        console.error('Supabase initialization error:', error);
-        loginError.textContent = 'Erro ao inicializar autenticação';
-        loginError.classList.remove('hidden');
-    }
-
-    // Authentication
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email-input').value.trim();
-        const password = document.getElementById('password-input').value;
-
-        // Basic validation
-        if (!email || !password) {
-            loginError.textContent = 'Por favor, preencha todos os campos';
-            loginError.classList.remove('hidden');
+        // Verificar se Supabase está definido
+        if (!window.supabase || !window.supabase.createClient) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.textContent = 'Biblioteca Supabase não carregada. Verifique sua conexão de internet.';
+            messageArea.classList.add('message-error');
             return;
         }
 
+        // Inicialização do Supabase
+        let supabase;
         try {
-            showLoading(true);
-            loginError.classList.add('hidden');
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-            if (error) {
-                throw error;
-            }
-
-            if (data.user) {
-                // Verify user role
-                const { data: userData, error: userError } = await supabase
-                    .from('users')
-                    .select('role')
-                    .eq('email', email)
-                    .single();
-
-                if (userError) throw userError;
-
-                if (userData.role === 'admin') {
-                    showAdminPortal();
-                } else {
-                    showMainPortal();
-                }
-            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch (error) {
-            loginError.textContent = error.message || 'Credenciais inválidas. Tente novamente.';
-            loginError.classList.remove('hidden');
-            console.error('Login error:', error);
-        } finally {
-            showLoading(false);
+            messageArea.textContent = 'Erro ao inicializar Supabase: ' + error.message;
+            messageArea.classList.add('message-error');
+            return;
         }
-    });
 
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', logout);
-    document.getElementById('admin-logout-btn').addEventListener('click', logout);
-
-    async function logout() {
-        try {
-            showLoading(true);
-            await supabase.auth.signOut();
-            showLoginPage();
-        } catch (error) {
-            console.error('Logout error:', error);
-        } finally {
-            showLoading(false);
+        // Limpar mensagens
+        function clearMessages() {
+            messageArea.textContent = '';
+            messageArea.className = 'message';
         }
-    }
 
-    // Show pages
-    function showLoginPage() {
-        loginPage.classList.remove('hidden');
-        mainPortal.classList.add('hidden');
-        adminPortal.classList.add('hidden');
-    }
+        // Mostrar mensagem de erro
+        function showErrorMessage(message) {
+            clearMessages();
+            messageArea.textContent = message;
+            messageArea.classList.add('message-error');
+        }
 
-    function showMainPortal() {
-        loginPage.classList.add('hidden');
-        mainPortal.classList.remove('hidden');
-        adminPortal.classList.add('hidden');
-        initializeChat();
-    }
+        // Mostrar mensagem de sucesso
+        function showSuccessMessage(message) {
+            clearMessages();
+            messageArea.textContent = message;
+            messageArea.classList.add('message-success');
+        }
 
-    function showAdminPortal() {
-        loginPage.classList.add('hidden');
-        mainPortal.classList.add('hidden');
-        adminPortal.classList.remove('hidden');
-        loadAdminData();
-    }
+        // Atualizar estado da UI para usuário logado
+        function updateLoggedInUI(user) {
+            loginForm.style.display = 'none';
+            loggedUserArea.textContent = `Logado como: ${user.email}`;
+            loggedInActions.style.display = 'block';
+            clearMessages();
+        }
 
-    // Existing chat and admin functionality remains the same...
-
-    // Session Check on Page Load
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            showLoading(true);
-            const { data: { session } } = await supabase.auth.getSession();
+        // Atualizar estado da UI para logout
+        function updateLoggedOutUI() {
+            loginForm.style.display = 'block';
+            loggedInActions.style.display = 'none';
+            loggedUserArea.textContent = '';
             
-            if (session) {
-                const { data: userData } = await supabase
-                    .from('users')
-                    .select('role')
-                    .eq('email', session.user.email)
-                    .single();
-
-                if (userData.role === 'admin') {
-                    showAdminPortal();
-                } else {
-                    showMainPortal();
-                }
-            } else {
-                showLoginPage();
-            }
-        } catch (error) {
-            console.error('Session check error:', error);
-            showLoginPage();
-        } finally {
-            showLoading(false);
+            // Limpar campos de login
+            document.getElementById('email').value = '';
+            document.getElementById('senha').value = '';
+            clearMessages();
         }
+
+        // Verificar estado de autenticação ao carregar a página
+        async function checkAuthStatus() {
+            try {
+                showLoading(true);
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (user) {
+                    // Verificar papel do usuário
+                    const { data: userData, error: userError } = await supabase
+                        .from('users')
+                        .select('role')
+                        .eq('email', user.email)
+                        .single();
+
+                    if (userError) throw userError;
+
+                    // Verificar o papel do usuário e redirecionar
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'funcionario.html';
+                    }
+                }
+            } catch (error) {
+                showErrorMessage('Erro ao verificar autenticação');
+                console.error('Erro de autenticação:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Chamar na inicialização
+        checkAuthStatus();
+
+        // Evento de login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            // Validação básica de email
+            if (!email || !senha) {
+                showErrorMessage('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                clearMessages();
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
+
+                if (error) {
+                    showErrorMessage(error.message || 'Erro no login');
+                    return;
+                }
+
+                if (data.user) {
+                    // Verificar papel do usuário
+                    const { data: userData, error: userError } = await supabase
+                        .from('users')
+                        .select('role')
+                        .eq('email', email)
+                        .single();
+
+                    if (userError) throw userError;
+
+                    // Redirecionar com base no papel do usuário
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'funcionario.html';
+                    }
+                }
+            } catch (err) {
+                showErrorMessage('Erro ao tentar login');
+                console.error('Erro de login:', err);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Botão de trocar de conta (agora "Continuar")
+        switchAccountBtn.addEventListener('click', () => {
+            updateLoggedOutUI();
+        });
+
+        // Botão de logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                showLoading(true);
+                await supabase.auth.signOut();
+                updateLoggedOutUI();
+                showSuccessMessage('Logout realizado com sucesso');
+            } catch (err) {
+                showErrorMessage('Erro ao fazer logout');
+                console.error('Erro de logout:', err);
+            } finally {
+                showLoading(false);
+            }
+        });
     });
 </script>
