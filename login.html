@@ -6,6 +6,30 @@
     <title>Login</title>
     <!-- Supabase library with integrity and crossorigin for security -->
 <script>
+    // Adicione este código antes da configuração do Supabase
+window.addEventListener('error', function(event) {
+    const messageArea = document.getElementById('messageArea');
+    if (messageArea) {
+        messageArea.textContent = 'Erro ao carregar biblioteca: ' + event.message;
+        messageArea.classList.add('message-error');
+    }
+    console.error('Erro de carregamento:', event);
+});
+
+// Verificação manual do Supabase
+function checkSupabaseLoaded() {
+    if (typeof supabase === 'undefined') {
+        const messageArea = document.getElementById('messageArea');
+        if (messageArea) {
+            messageArea.textContent = 'Biblioteca Supabase não carregada. Verifique sua conexão de internet.';
+            messageArea.classList.add('message-error');
+        }
+    }
+}
+
+// Chame após um curto atraso
+setTimeout(checkSupabaseLoaded, 3000);
+    
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
     integrity="sha384-SEU_HASH_AQUI"
     crossorigin="anonymous"
