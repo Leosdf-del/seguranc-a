@@ -32,7 +32,6 @@
 
         // Verificar se Supabase está definido
         if (!window.supabase || !window.supabase.createClient) {
-            const messageArea = document.getElementById('messageArea');
             messageArea.textContent = 'Biblioteca Supabase não carregada. Verifique sua conexão de internet.';
             messageArea.classList.add('message-error');
             return;
@@ -88,39 +87,34 @@
             clearMessages();
         }
 
-        // Verificar estado de autenticação ao carregar a página
-        async function checkAuthStatus() {
+        // Verificar estado de autenticação inicial
+        async function checkInitialAuthStatus() {
             try {
-                showLoading(true);
                 const { data: { user } } = await supabase.auth.getUser();
                 
                 if (user) {
                     // Verificar papel do usuário
-                    const { data: userData, error: userError } = await supabase
+                    const { data: userData } = await supabase
                         .from('users')
                         .select('role')
                         .eq('email', user.email)
                         .single();
 
-                    if (userError) throw userError;
-
                     // Verificar o papel do usuário e redirecionar
-                    if (userData.role === 'admin') {
+                    if (userData?.role === 'admin') {
                         window.location.href = 'admin.html';
-                    } else {
+                    } else if (userData?.role === 'user') {
                         window.location.href = 'funcionario.html';
                     }
                 }
             } catch (error) {
-                showErrorMessage('Erro ao verificar autenticação');
-                console.error('Erro de autenticação:', error);
-            } finally {
-                showLoading(false);
+                console.error('Erro de autenticação inicial:', error);
+                // Continua na página de login se houver erro
             }
         }
 
-        // Chamar na inicialização
-        checkAuthStatus();
+        // Chamar verificação de autenticação
+        checkInitialAuthStatus();
 
         // Evento de login
         loginForm.addEventListener('submit', async (e) => {
