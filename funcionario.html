@@ -327,13 +327,15 @@
     </div>
 
     <script>
-        // Inicialização do Supabase
+        // Inicialização do Supabase (CORRIGIDO)
         const supabaseUrl = 'https://lmlxvmzeifjvjakpomgp.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHh2bXplaWZqdmpha3BvbWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTQ0MzgsImV4cCI6MjA1ODU5MDQzOH0.QmHSbZrzRhos0DqQFZDnbeqvV9dcRYISQ88MbNsRDyM';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Corrigido: Usando o método correto do Supabase para criar o cliente
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         // Simulando autenticação para testes (remover em produção)
-        // Em produção, você usaria supabase.auth.signInWithPassword ou outra forma de autenticação
+        // Em produção, você usaria supabaseClient.auth.signInWithPassword ou outra forma de autenticação
         let usuarioAtual = null;
         let usuarioEmail = 'usuario.teste@exemplo.com';
 
@@ -341,12 +343,12 @@
         async function carregarPerfilUsuario() {
             try {
                 // Em produção, você verificaria a sessão atual:
-                // const { data: { session } } = await supabase.auth.getSession();
+                // const { data: { session } } = await supabaseClient.auth.getSession();
                 // if (!session) return redirecionarLogin();
                 // const userEmail = session.user.email;
                 
                 // Para testes, usamos o email fixo:
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('usuarios')
                     .select('*')
                     .eq('email', usuarioEmail)
@@ -386,7 +388,7 @@
         // Função para carregar os horários do usuário
         async function carregarHorarios(usuarioId) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('horarios')
                     .select('*')
                     .eq('usuario_id', usuarioId)
@@ -455,17 +457,10 @@
             
             try {
                 // Verifica se já existe um registro para hoje
-                const { data: registroExistente, error: errorConsulta } = await supabase
+                const { data: registroExistente, error: errorConsulta } = await supabaseClient
                     .from('horarios')
                     .select('*')
                     .eq('usuario_id', usuarioAtual.id)
                     .eq('data', agora.toISOString().split('T')[0])
                     .single();
-                
-                if (errorConsulta && errorConsulta.code !== 'PGRST116') {
-                    // Erro diferente de "não encontrado"
-                    console.error('Erro ao verificar registro existente:', errorConsulta);
-                    alert('Erro ao verificar registro. Tente novamente.');
-                    return;
-                }
-        
+          
