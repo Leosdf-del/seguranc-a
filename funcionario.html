@@ -6,124 +6,159 @@
     <title>Nexus - Portal Corporativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-   /* Importação de fonte personalizada */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        /* Importação de fonte personalizada */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
-/* Variáveis de tema */
-:root {
-    --color-primary: #3B82F6;
-    --color-secondary: #10B981;
-    --color-accent: #6366F1;
-    --gradient-primary: linear-gradient(135deg, #3B82F6, #6366F1);
-    --gradient-secondary: linear-gradient(135deg, #10B981, #34D399);
-}
+        /* Variáveis de tema */
+        :root {
+            --color-primary: #3B82F6;
+            --color-secondary: #10B981;
+            --color-accent: #6366F1;
+            --gradient-primary: linear-gradient(135deg, #3B82F6, #6366F1);
+            --gradient-secondary: linear-gradient(135deg, #10B981, #34D399);
+        }
 
-/* Estilo base do corpo */
-body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
-}
+        /* Estilo base do corpo */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+        }
 
-/* Cartões elevados com efeito de hover */
-.card-elevated {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.08);
-}
+        /* Cartões elevados com efeito de hover */
+        .card-elevated {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.08);
+        }
 
-.card-elevated:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.12);
-}
+        .card-elevated:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.12);
+        }
 
-/* Animação de pulso sutil */
-@keyframes pulse-subtle {
-    0%, 100% { 
-        transform: scale(1); 
-    }
-    50% { 
-        transform: scale(1.02); 
-    }
-}
+        /* Animação de pulso sutil */
+        @keyframes pulse-subtle {
+            0%, 100% { 
+                transform: scale(1); 
+            }
+            50% { 
+                transform: scale(1.02); 
+            }
+        }
 
-.animate-pulse-subtle {
-    animation: pulse-subtle 2s infinite;
-}
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite;
+        }
 
-/* Estilo de cabeçalho */
-header {
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
+        /* Estilo de cabeçalho */
+        header {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
 
-/* Botões com gradiente */
-.btn-gradient-primary {
-    background: linear-gradient(to right, #3B82F6, #6366F1);
-    color: white;
-    transition: opacity 0.3s ease;
-}
+        /* Botões com gradiente */
+        .btn-gradient-primary {
+            background: linear-gradient(to right, #3B82F6, #6366F1);
+            color: white;
+            transition: opacity 0.3s ease;
+        }
 
-.btn-gradient-primary:hover {
-    opacity: 0.9;
-}
+        .btn-gradient-primary:hover {
+            opacity: 0.9;
+        }
 
-.btn-gradient-secondary {
-    background: linear-gradient(to right, #10B981, #34D399);
-    color: white;
-    transition: opacity 0.3s ease;
-}
+        .btn-gradient-secondary {
+            background: linear-gradient(to right, #10B981, #34D399);
+            color: white;
+            transition: opacity 0.3s ease;
+        }
 
-.btn-gradient-secondary:hover {
-    opacity: 0.9;
-}
+        .btn-gradient-secondary:hover {
+            opacity: 0.9;
+        }
 
-/* Estilo de tabela */
-table thead {
-    background-color: #F3F4F6;
-    color: #4B5563;
-}
+        /* Estilo de tabela */
+        table thead {
+            background-color: #F3F4F6;
+            color: #4B5563;
+        }
 
-table tbody tr:hover {
-    background-color: #EFF6FF;
-    transition: background-color 0.3s ease;
-}
+        table tbody tr:hover {
+            background-color: #EFF6FF;
+            transition: background-color 0.3s ease;
+        }
 
-/* Status e tags */
-.status-tag {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-weight: 500;
-}
+        /* Status e tags */
+        .status-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
 
-.status-confirmed {
-    background-color: #10B981;
-    color: white;
-}
+        .status-confirmed {
+            background-color: #10B981;
+            color: white;
+        }
 
-/* Chat e mensagens */
-.chat-message-sent {
-    background-color: #DBEAFE;
-    color: #1E40AF;
-    border-radius: 0.5rem;
-    max-width: 75%;
-    margin-left: auto;
-}
+        /* Chat e mensagens */
+        .chat-message-sent {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+            border-radius: 0.5rem;
+            max-width: 75%;
+            margin-left: auto;
+        }
 
-.chat-message-received {
-    background-color: #F3F4F6;
-    color: #4B5563;
-    border-radius: 0.5rem;
-    max-width: 75%;
-}
+        .chat-message-received {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            border-radius: 0.5rem;
+            max-width: 75%;
+        }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-}
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top: 3px solid #3B82F6;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dropdown do perfil */
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            min-width: 200px;
+            z-index: 50;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -141,13 +176,33 @@ table tbody tr:hover {
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4 relative" id="profile-container">
                     <div class="text-right">
-                        <p class="font-semibold text-gray-800">João Silva</p>
-                        <p class="text-sm text-gray-500">Departamento de TI</p>
+                        <!-- Elementos que serão atualizados com dados do Supabase -->
+                        <p id="usuario-nome" class="font-semibold text-gray-800">Carregando...</p>
+                        <p id="usuario-cargo" class="text-sm text-gray-500">Carregando...</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full overflow-hidden border-2 border-blue-300">
-                        <img src="/api/placeholder/150/150" alt="Perfil" class="w-full h-full object-cover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full overflow-hidden border-2 border-blue-300 cursor-pointer" id="profile-button">
+                        <img id="usuario-imagem" src="/api/placeholder/150/150" alt="Perfil" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- Dropdown de perfil -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div class="p-4 border-b">
+                            <p id="dropdown-usuario-nome" class="font-semibold text-gray-800">Carregando...</p>
+                            <p id="dropdown-usuario-email" class="text-sm text-gray-500">email@exemplo.com</p>
+                        </div>
+                        <div class="p-2">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded transition">
+                                <i class="fas fa-user-circle mr-2 text-blue-500"></i> Meu Perfil
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-50 rounded transition">
+                                <i class="fas fa-cog mr-2 text-blue-500"></i> Configurações
+                            </a>
+                            <button id="logout-button" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -178,23 +233,19 @@ table tbody tr:hover {
                                     <th class="p-3 rounded-r font-semibold">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b hover:bg-blue-50 transition">
-                                    <td class="p-3">Segunda</td>
-                                    <td class="p-3">08:00</td>
-                                    <td class="p-3">17:00</td>
-                                    <td class="p-3">
-                                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                                            Confirmado
-                                        </span>
+                            <tbody id="tabela-horarios">
+                                <!-- Dados serão carregados dinamicamente -->
+                                <tr>
+                                    <td colspan="4" class="p-3 text-center text-gray-500">
+                                        <span class="loader mr-2"></span>
+                                        Carregando horários...
                                     </td>
                                 </tr>
-                                <!-- Mais linhas -->
                             </tbody>
                         </table>
                     </div>
                     
-                    <button class="mt-6 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg hover:opacity-90 transition font-semibold">
+                    <button id="registrar-ponto" class="mt-6 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg hover:opacity-90 transition font-semibold">
                         Registrar Ponto
                     </button>
                 </div>
@@ -276,44 +327,145 @@ table tbody tr:hover {
     </div>
 
     <script>
-        // Script de chat mantido igual ao exemplo anterior
-        document.getElementById('enviar-mensagem').addEventListener('click', enviarMensagem);
-        document.getElementById('mensagem-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                enviarMensagem();
+        // Inicialização do Supabase
+        const supabaseUrl = 'SUA_URL_DO_SUPABASE';
+        const supabaseKey = 'SUA_CHAVE_DO_SUPABASE';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Simulando autenticação para testes (remover em produção)
+        // Em produção, você usaria supabase.auth.signInWithPassword ou outra forma de autenticação
+        let usuarioAtual = null;
+        let usuarioEmail = 'usuario.teste@exemplo.com';
+
+        // Função para carregar dados do usuário
+        async function carregarPerfilUsuario() {
+            try {
+                // Em produção, você verificaria a sessão atual:
+                // const { data: { session } } = await supabase.auth.getSession();
+                // if (!session) return redirecionarLogin();
+                // const userEmail = session.user.email;
+                
+                // Para testes, usamos o email fixo:
+                const { data, error } = await supabase
+                    .from('usuarios')
+                    .select('*')
+                    .eq('email', usuarioEmail)
+                    .single();
+                
+                if (error) {
+                    console.error('Erro ao buscar dados do usuário:', error);
+                    return;
+                }
+                
+                if (data) {
+                    usuarioAtual = data;
+                    
+                    // Atualiza as informações na interface
+                    document.getElementById('usuario-nome').textContent = data.usuario_nome || 'Usuário';
+                    document.getElementById('usuario-cargo').textContent = data.cargo || 'Sem cargo definido';
+                    
+                    // Atualiza o dropdown também
+                    document.getElementById('dropdown-usuario-nome').textContent = data.usuario_nome || 'Usuário';
+                    document.getElementById('dropdown-usuario-email').textContent = data.email;
+                    
+                    // Se houver uma URL de imagem
+                    if (data.imagem_url) {
+                        document.getElementById('usuario-imagem').src = data.imagem_url;
+                    }
+                    
+                    // Carrega horários e outros dados específicos do usuário
+                    carregarHorarios(data.id);
+                } else {
+                    console.error('Usuário não encontrado');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
             }
-        });
-
-        function enviarMensagem() {
-            const input = document.getElementById('mensagem-input');
-            const chatContainer = document.getElementById('chat-container');
-            
-            if (input.value.trim() === '') return;
-
-            const mensagemUsuario = document.createElement('div');
-            mensagemUsuario.innerHTML = `
-                <div class="bg-blue-100 p-3 rounded-lg mb-2 max-w-xs ml-auto">
-                    <p class="text-sm font-medium text-blue-800">${input.value}</p>
-                    <span class="text-xs text-blue-600 block text-right mt-1">Agora</span>
-                </div>
-            `;
-            chatContainer.appendChild(mensagemUsuario);
-
-            setTimeout(() => {
-                const respostaAutomatica = document.createElement('div');
-                respostaAutomatica.innerHTML = `
-                    <div class="bg-gray-200 p-3 rounded-lg mb-2 max-w-xs">
-                        <p class="text-sm font-medium text-gray-800">Recebemos sua mensagem. Em breve retornaremos.</p>
-                        <span class="text-xs text-gray-600 block text-right mt-1">Suporte</span>
-                    </div>
-                `;
-                chatContainer.appendChild(respostaAutomatica);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 1000);
-
-            input.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-    </script>
-</body>
-</html>
+        
+        // Função para carregar os horários do usuário
+        async function carregarHorarios(usuarioId) {
+            try {
+                const { data, error } = await supabase
+                    .from('horarios')
+                    .select('*')
+                    .eq('usuario_id', usuarioId)
+                    .order('data', { ascending: true });
+                
+                if (error) {
+                    console.error('Erro ao buscar horários:', error);
+                    return;
+                }
+                
+                const tabelaHorarios = document.getElementById('tabela-horarios');
+                tabelaHorarios.innerHTML = '';
+                
+                // Se não houver dados, mostra mensagem
+                if (!data || data.length === 0) {
+                    tabelaHorarios.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="p-3 text-center text-gray-500">
+                                Nenhum horário registrado
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Preenche a tabela com os dados
+                data.forEach(horario => {
+                    const data = new Date(horario.data);
+                    const diaSemana = obterDiaSemana(data.getDay());
+                    
+                    const row = document.createElement('tr');
+                    row.className = 'border-b hover:bg-blue-50 transition';
+                    row.innerHTML = `
+                        <td class="p-3">${diaSemana}</td>
+                        <td class="p-3">${horario.entrada || '-'}</td>
+                        <td class="p-3">${horario.saida || '-'}</td>
+                        <td class="p-3">
+                            <span class="bg-${horario.confirmado ? 'green' : 'yellow'}-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                ${horario.confirmado ? 'Confirmado' : 'Pendente'}
+                            </span>
+                        </td>
+                    `;
+                    tabelaHorarios.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar horários:', error);
+            }
+        }
+        
+        // Função auxiliar para obter o dia da semana
+        function obterDiaSemana(dia) {
+            const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            return diasSemana[dia];
+        }
+        
+        // Função para registrar ponto
+        async function registrarPonto() {
+            if (!usuarioAtual) {
+                alert('Você precisa estar logado para registrar ponto.');
+                return;
+            }
+            
+            const agora = new Date();
+            const horaAtual = agora.getHours().toString().padStart(2, '0') + ':' + 
+                            agora.getMinutes().toString().padStart(2, '0');
+            
+            try {
+                // Verifica se já existe um registro para hoje
+                const { data: registroExistente, error: errorConsulta } = await supabase
+                    .from('horarios')
+                    .select('*')
+                    .eq('usuario_id', usuarioAtual.id)
+                    .eq('data', agora.toISOString().split('T')[0])
+                    .single();
+                
+                if (errorConsulta && errorConsulta.code !== 'PGRST116') {
+                    // Erro diferente de "não encontrado"
+                    console.error('Erro ao verificar registro existente:', errorConsulta);
+                    alert('Erro ao verificar registro. Tente novamente.');
+                    return;
+                }
+        
